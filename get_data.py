@@ -149,6 +149,8 @@ def get_data(apikey):
 
     datasets = [exchange_rates, sma, ema, rsi, bbands, macd, stoch]
     data = pd.concat(datasets, axis=1)
+    data = data[::-1]
+    data = data.dropna(axis=0)
     data.to_csv("data.csv")
     return data
 
