@@ -1,4 +1,4 @@
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import pandas as pd
@@ -40,7 +40,7 @@ def preprocess(test_size=0.2):
     X, y = df.loc[:, df.columns != 'Close (USD)'], df["Close (USD)"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, shuffle=False)
 
-    normalizer = StandardScaler()
+    normalizer = MinMaxScaler()
     X_norm_train = normalizer.fit_transform(X_train)
     X_norm_test = normalizer.transform(X_test)
     return X_norm_train, X_norm_test, y_train, y_test
@@ -53,6 +53,6 @@ def get_data():
     retunrs: tuple of tensors (tf.data.Dataset)
     """
     X_train, X_test, y_train, y_test = preprocess()
-    train = timeseries_dataset_multistep(X_train, y_train, input_sequence_length=3, output_sequence_length=3, batch_size=3)
-    test = timeseries_dataset_multistep(X_test, y_test, input_sequence_length=3, output_sequence_length=3, batch_size=3)
+    train = timeseries_dataset_multistep(X_train, y_train, input_sequence_length=7, output_sequence_length=3, batch_size=1)
+    test = timeseries_dataset_multistep(X_test, y_test, input_sequence_length=7, output_sequence_length=3, batch_size=1)
     return train, test
