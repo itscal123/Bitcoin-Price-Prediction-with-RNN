@@ -29,10 +29,13 @@ if __name__ == "__main__":
     _, test = get_data()
     model = tf.keras.models.load_model("saved_model\my_model")
     print(model.evaluate(test))
-    predictions = model.predict(test)
-    print(predictions[0])
-
+    print(test)
     """
+    predictions = model.predict(test)
+    print(predictions)
+    #Y_pred = model.predict(test)[:, -1][..., np.newaxis]
+    #print(Y_pred)
+    
     for batch in test.take(1):
         for arr in batch:
             print(arr.numpy())
