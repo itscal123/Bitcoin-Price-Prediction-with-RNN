@@ -10,3 +10,8 @@ class Baseline(tf.keras.Model):
             return inputs
         result = inputs[:, :, self.label_index]
         return result[:, :, tf.newaxis]
+
+
+class MultiStepBaseline(tf.keras.Model):
+    def call(self, inputs):
+        return tf.tile(inputs[:, -1:, :], [1, 3, 1])

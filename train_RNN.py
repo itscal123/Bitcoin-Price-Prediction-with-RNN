@@ -1,7 +1,7 @@
 import tensorflow as tf
-from setup_data import retrieve_data
 from window import WindowGenerator
 from baseline import Baseline
+from data import Data, get_data_df
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,7 +11,7 @@ def last_time_step_mse(Y_true, Y_pred):
     return keras.metrics.mean_squared_error(Y_true[:, -1], Y_pred[:, -1])
 
 
-def compile_and_fit(model, window, patience=10):
+def compile_and_fit(model, window, patience=8):
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss",
                                                       patience=patience,
                                                       mode="min",
@@ -36,7 +36,8 @@ simple_lstm_model = tf.keras.models.Sequential([
 ])
 
 if __name__ == "__main__":
-    train_df, val_df, test_df = retrieve_data()
+    data = Data(get_data_df())
+    train_df, val_df, test_df, num_features = data.get_data()
     single_output_window = WindowGenerator(
         input_width=7, label_width=7, shift=1,
         train_df=train_df, val_df=val_df, test_df=test_df, label_columns=['Close (USD)'])
@@ -56,7 +57,7 @@ if __name__ == "__main__":
     val_mae = [v[metric_index] for v in val_performance.values()]
     test_mae = [v[metric_index] for v in performance.values()]
 
-    plt.ylabel('mean_absolute_error [T (degC), normalized]')
+    plt.ylabel('mean_absolute_error [Close (USD), normalized]')
     plt.bar(x - 0.17, val_mae, width, label='Validation')
     plt.bar(x + 0.17, test_mae, width, label='Test')
     plt.xticks(ticks=x, labels=performance.keys(),
